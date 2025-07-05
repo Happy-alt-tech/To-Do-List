@@ -1,0 +1,175 @@
+/* Typography & root palette
+      Google Fonts import keeps markup lighter   */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+:root {
+  --bg-light: #f9f9f9;
+  --bg-dark:  #1e1e1e;
+  --text-light: #333;
+  --text-dark:  #eee;
+  --accent: #007bff;
+}
+
+/*   Sensible reset — avoids layout quirks across browsers  */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;                                 
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;                     
+}
+
+/*   Page scaffold */
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: var(--bg-light);
+  color: var(--text-light);
+  padding: 2rem 1rem;
+  transition: background 0.3s ease;
+}
+
+/* Automatic dark mode if OS is dark  */
+@media (prefers-color-scheme: dark) {                      
+  body {
+    background: var(--bg-dark);
+    color: var(--text-dark);
+  }
+}
+
+h1 {
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+#taskForm {                                                
+  width: min(100%, 600px);
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+#taskInput {
+  flex: 1 1 auto;
+  padding: 0.75rem 1rem;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  transition: border-color 0.25s;
+}
+
+#taskInput:focus {
+  border-color: var(--accent);
+  outline: none;
+}
+
+#addTaskButton {
+  flex: 0 0 auto;
+  padding: 0.75rem 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.25s, transform 0.15s;          
+}
+
+#addTaskButton:hover { background: #0056c9; }              
+#addTaskButton:active { transform: scale(0.95); }
+
+
+.scroll-box {                                              
+  width: min(100%, 600px);
+  max-height: 350px;
+  overflow-y: auto;                                       
+  list-style: none;
+  padding: 0;
+  border: 1px solid #e0e0e0;
+  border-radius: 0.5rem;
+  background: #fff;
+}
+
+
+.scroll-box::-webkit-scrollbar { width: 8px; }             
+.scroll-box::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+}
+.scroll-box::-webkit-scrollbar-thumb:hover { background: #b3b3b3; }
+
+.scroll-box li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #eee;
+}
+.scroll-box li:last-child { border-bottom: none; }
+
+.scroll-box input[type="checkbox"] {
+  margin-right: 0.75rem;
+  accent-color: var(--accent);                             
+  transform: scale(1.2);
+}
+
+.scroll-box span {
+  flex: 1;
+  word-break: break-word;
+}
+
+.scroll-box span.done {                                  
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+.scroll-box button.delete {
+  background: transparent;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.scroll-box button.delete:hover { color: crimson; }        
+
+
+#clearTasksButton {
+  margin-bottom: 1rem;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 0.5rem;
+  background: #555;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.25s;
+}
+
+#clearTasksButton:hover { background: #444; }
+#clearTasksButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+
+.stats {
+  width: min(100%, 600px);
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  color: var(--text-light);
+}
+
+.stats div {
+  flex: 1 1 30%;
+  background: var(--bg-light);
+  border: 1px solid #ddd;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  text-align: center;
+  font-weight: 600;
+}
