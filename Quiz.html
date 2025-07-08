@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simple Quiz</title>
+  <style>
+    /* ===== Reset + theme ===== */
+    * { margin:0; padding:0; box-sizing:border-box; font-family:Poppins, sans-serif; }
+    body { background:gray; display:flex; justify-content:center; align-items:start; min-height:100vh; }
+
+    /* ===== Card wrapper ===== */
+    .app { background:#fff; width:90%; max-width:600px; margin-top:100px; border-radius:10px; padding:20px; box-shadow:0 0 10px rgba(0,0,0,.1); }
+    h1 { font-size:2rem; margin-bottom:20px; text-align:center; color:#06223f; }
+    h2 { font-size:1.5rem; margin-bottom:20px; color:#06223f; text-align:center; }
+
+    /* ===== Answers list ===== */
+    #answer-buttons { display:flex; flex-direction:column; gap:10px; }
+    .btn { background:#007bff; color:#fff; border:none; padding:10px; border-radius:5px; cursor:pointer; font-size:1rem; }
+    .btn:hover { background:#0056b3; }
+    .correct { background:#28a745 !important; }
+    .wrong   { background:#dc3545 !important; }
+
+    /* ===== Navigation buttons ===== */
+    .nav-btn { background:#356fec; color:#fff; border:none; padding:10px 24px; border-radius:5px; cursor:pointer; font-size:1rem; width:120px; margin:24px auto 0; display:none; }
+    .nav-btn:hover { background:#19476d; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <h1>Simple Quiz</h1>
+    <div class="quiz">
+      <h2 id="question">Question text</h2>
+      <div id="answer-buttons"></div>
+      <h2 id="result" style="display:none;"></h2> <!-- Score output -->
+      <button id="next-btn" class="nav-btn">Next</button>
+      <button id="restart-btn" class="nav-btn">Restart</button>
+    </div>
+  </div>
+
+  <script>
+    // ===== 1.  Question bank =====
+    const questions = [
+      { question:"What is the largest planet in our solar system?", answers:[
+          { text:"Earth",   correct:false },
+          { text:"Jupiter", correct:true  },
+          { text:"Mars",    correct:false },
+          { text:"Saturn",  correct:false }
+      ]},
+      { question:"What is the largest animal on Earth?", answers:[
+          { text:"Elephant",          correct:false },
+          { text:"Blue Whale",        correct:true  },
+          { text:"Giraffe",           correct:false },
+          { text:"Great White Shark", correct:false }
+      ]},
+      { question:"How do you comment HTML code?", answers:[
+          { text:"//",          correct:false },
+          { text:"<!-- -->",    correct:true  },
+          { text:"#",           correct:false },
+          { text:"**",          correct:false }
+      ]},
+      { question:"Who is the founder of HTML?", answers:[
+          { text:"Tim Berners‑Lee", correct:true  },
+          { text:"Brendan Eich",   correct:false },
+          { text:"Mark Zuckerberg",correct:false },
+          { text:"Larry Page",     correct:false }
+      ]},
+      { question:"Who is the founder of CSS?", answers:[
+          { text:"Håkon Wium Lie", correct:true  },
+          { text:"Tim Berners‑Lee",correct:false },
+          { text:"Brendan Eich",   correct:false },
+          { text:"Mark Zuckerberg",correct:false }
+      ]},
+      { question:"What is the purpose of CSS?", answers:[
+          { text:"To structure the content",        correct:false },
+          { text:"To style the content",            correct:true  },
+          { text:"To add interactivity",            correct:false },
+          { text:"To define the document structure",correct:false }
+      ]},
+      { question:"What is the purpose of JavaScript?", answers:[
+          { text:"To style the content",            correct:false },
+          { text:"To add interactivity",            correct:true  },
+          { text:"To structure the content",        correct:false },
+          { text:"To define the document structure", correct:false }
+      ]},
+      { question:"What is the purpose of HTML?", answers:[
+          { text:"To style the content",            correct:false },
+          { text:"To structure the content",        correct:true  },
+          { text:"To add interactivity",            correct:false },
+          { text:"To define the document structure", correct:false }
+      ]}
+    ];
+
+    // ===== 2.  DOM refs =====
+    const questionEl   = document.getElementById("question");
+    const answersEl    = document.getElementById("answer-buttons");
+    const resultEl     = document.getElementById("result");
+    const nextBtn      = document.getElementById("next-btn");
+    const restartBtn   = document.getElementById("restart-btn");
+
+    // ===== 3.  State =====
+    let currentIndex = 0;
+    let score        = 0;
+
+    // ===== 4.  Init =====
+    startQuiz();
+
+    // ===== 5.  Core =====
+    function startQuiz() {
+      currentIndex = 0;
+      score = 0;
+      nextBtn.style.display    = 'none';
+      restartBtn.style.display = 'none';
+      resultEl.style.display   = 'none';
+      showQuestion(questions[currentIndex]);
+    }
+
+    function showQuestion(q) {
+      questionEl.innerText = q.question;
+      answersEl.innerHTML  = "";
+      q.answers.forEach(answer => {
+        const btn = document.createElement("button");
+        btn.innerText = answer.text;
+        btn.className = "btn";
+        btn.addEventListener("click", () => selectAnswer(answer, btn));
+        answersEl.appendChild(btn);
+      });
+    }
+
+    function selectAnswer(answer, btn) {
+      // Lock buttons
+      Array.from(answersEl.children).forEach(b => { b.disabled = true; });
+
+      // Highlight
+      if (answer.correct) {
+        score++;
+        btn.classList.add("correct");
+      } else {
+        btn.classList.add("wrong");
+        // reveal right answer
+        Array.from(answersEl.children).forEach(b => {
+          if (b.innerText === questions[currentIndex].answers.find(a=>a.correct).text) {
+            b.classList.add("correct");
+          }
+        });
+      }
+      nextBtn.style.display = 'block';
+    }
+
+    nextBtn.addEventListener('click', () => {
+      currentIndex++;
+      if (currentIndex < questions.length) {
+        nextBtn.style.display = 'none';
+        showQuestion(questions[currentIndex]);
+      } else {
+        endQuiz();
+      }
+    });
+
+    function endQuiz() {
+      questionEl.innerText = "Quiz Completed!";
+      answersEl.innerHTML  = "";
+      resultEl.innerText   = `Your score: ${score} / ${questions.length}`;
+      resultEl.style.display = 'block';
+      nextBtn.style.display  = 'none';
+      restartBtn.style.display = 'block';
+    }
+
+    // ===== 6.  Restart =====
+    restartBtn.addEventListener('click', startQuiz);
+  </script>
+</body>
+</html>
